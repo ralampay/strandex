@@ -16,3 +16,10 @@ class PdfReaderTool:
             text = page.extract_text() or ""
             pages.append(text)
         return "\n".join(pages).strip()
+
+    def metadata(self, pdf_path: Path) -> dict[str, str]:
+        reader = PdfReader(str(pdf_path))
+        info = reader.metadata or {}
+        title = str(getattr(info, "title", "") or "")
+        author = str(getattr(info, "author", "") or "")
+        return {"title": title.strip(), "author": author.strip()}
