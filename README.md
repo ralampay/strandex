@@ -50,6 +50,15 @@ Reusable tools live in `strandex/tools` so new agents can share functionality:
 - `strandex/tools/pdf_reader.py`: PDF text extraction.
 - `strandex/tools/llama_runner.py`: Local GGUF loading and completion helpers.
 - `strandex/tools/streaming.py`: Rich Live Markdown streaming helpers.
+- `strandex/tools/registry.py`: Tool registry for agents (configured via `config.json`).
+
+## Agent Config Schema
+
+All agents use the same config schema. Each agent keeps its own `config.json` with:
+- `name`: Agent name.
+- `description`: Short description.
+- `tools`: List of tool names from the registry.
+- `prompts`: Prompt templates used by the agent.
 
 ## Agent Docs
 

@@ -42,6 +42,8 @@ def main() -> int:
     )
     logger = logging.getLogger("strandex")
     console = Console(stderr=True)
+    logging.getLogger("pypdf").setLevel(logging.ERROR)
+    logging.getLogger("pypdf._utils").setLevel(logging.ERROR)
 
     def _total_memory_gb() -> Optional[float]:
         try:
@@ -83,7 +85,12 @@ def main() -> int:
         with console.status(f"Loading agent '{args.agent_name}'...", spinner="dots"):
             agent = load_agent(args.agent_name)
         logger.info("Loaded agent '%s'.", args.agent_name)
-        result = agent.run(args.input)
+        try:
+            result = agent.run(args.input)
+        except KeyboardInterrupt:
+            logger.info("Received interrupt. Shutting down cleanly.")
+            logger.info("Agent '%s' did not complete.", args.agent_name)
+            return 130
         logger.info("Completed agent '%s'.", args.agent_name)
         print("\nResult:")
         render_markdown = os.getenv("STRANDEX_RENDER_MARKDOWN", "1").lower() in {

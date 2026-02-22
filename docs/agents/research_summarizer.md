@@ -14,6 +14,7 @@ python -m strandex run research_summarizer --input "/path/to/document.pdf"
 
 - `strandex/tools/pdf_reader.py`: Extracts text from PDF files.
 - `strandex/tools/llama_runner.py`: Loads a local GGUF model and runs completions.
+- `strandex/tools/registry.py`: Tool registry used by the agent configuration.
 
 ## Example Usage
 

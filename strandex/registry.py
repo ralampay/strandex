@@ -2,23 +2,18 @@
 from __future__ import annotations
 
 import importlib
-import json
 import pkgutil
 from pathlib import Path
+
+from .config import load_agent_config
 
 AGENTS_PATH = Path(__file__).parent / "agents"
 
 
 def _load_agent_config(agent_name: str) -> dict:
     config_path = AGENTS_PATH / agent_name / "config.json"
-    if not config_path.exists():
-        return {}
-
-    try:
-        with config_path.open("r", encoding="utf-8") as handle:
-            return json.load(handle)
-    except json.JSONDecodeError:
-        return {}
+    config = load_agent_config(config_path)
+    return {"name": config.name, "description": config.description}
 
 
 def list_agents() -> list[dict]:

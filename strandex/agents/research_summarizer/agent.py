@@ -1,7 +1,6 @@
 """Agent that summarizes PDF research documents using a local LLM."""
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 from rich.console import Console
@@ -13,31 +12,23 @@ from rich.progress import (
     TimeElapsedColumn,
 )
 
+from strandex.config import load_agent_config
 from strandex.tools.llama_runner import load_llama_from_env, llama_complete
-from strandex.tools.pdf_reader import PdfReaderTool
+from strandex.tools.registry import get_tool
 
 
 class Agent:
     def __init__(self) -> None:
-        self._pdf_tool = PdfReaderTool()
-        self._prompts = self._load_prompts()
+        config = load_agent_config(Path(__file__).with_name("config.json"))
+        self._prompts = config.prompts
         self._console = Console(stderr=True)
+        self._tools = self._load_tools(config.tools)
 
-    def _load_prompts(self) -> dict[str, str]:
-        config_path = Path(__file__).with_name("config.json")
-        if not config_path.exists():
-            return {}
-
-        try:
-            with config_path.open("r", encoding="utf-8") as handle:
-                data = json.load(handle)
-        except json.JSONDecodeError:
-            return {}
-
-        prompts = data.get("prompts", {})
-        if not isinstance(prompts, dict):
-            return {}
-        return {key: str(value) for key, value in prompts.items()}
+    def _load_tools(self, tools: list[str]) -> dict[str, object]:
+        loaded = {}
+        for tool_name in tools:
+            loaded[tool_name] = get_tool(tool_name)
+        return loaded
 
     def _get_prompt(self, key: str, fallback: str) -> str:
         return self._prompts.get(key, fallback)
@@ -123,7 +114,9 @@ class Agent:
             "summary with 3-6 bullet points plus a short paragraph overview.\n\n"
             "Notes:\n{notes}\n\nSummary:\n",
         )
+
         prompt = template.format(notes=combined)
+
         return llama_complete(
             llm,
             prompt,
@@ -139,11 +132,11 @@ class Agent:
         if pdf_path.suffix.lower() != ".pdf":
             return "Input must be a .pdf file path."
 
-        text = self._pdf_tool.read(pdf_path)
+        text = self._tools["pdf_reader"].read(pdf_path)
         if not text:
             return "No extractable text found in the PDF."
 
-        metadata = self._pdf_tool.metadata(pdf_path)
+        metadata = self._tools["pdf_reader"].metadata(pdf_path)
         title = metadata.get("title", "")
         author = metadata.get("author", "")
         if not title or not author:
@@ -154,6 +147,7 @@ class Agent:
         llm = load_llama_from_env()
         chunks = self._chunk_text(text)
         summaries: list[str] = []
+
         with Progress(
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
@@ -173,4 +167,5 @@ class Agent:
 
         output_path = Path.cwd() / self._safe_filename(title)
         self._write_output(output_path, title, author, final_summary)
+
         return final_summary
