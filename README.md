@@ -24,8 +24,8 @@ Required:
 
 Optional tuning:
 - `STRANDEX_LLAMA_CTX` (context length, default `4096`)
-- `STRANDEX_LLAMA_THREADS` (CPU threads, default `8`)
-- `STRANDEX_LLAMA_GPU_LAYERS` (GPU offload layers, default `0`)
+- `STRANDEX_LLAMA_THREADS` (CPU threads, default `CPU cores - 2`)
+- `STRANDEX_LLAMA_GPU_LAYERS` (GPU offload layers, default `0`, CPU-first)
 
 ## Shared Tools
 

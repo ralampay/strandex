@@ -19,8 +19,10 @@ def load_llama_from_env() -> Llama:
             "Set STRANDEX_LLAMA_MODEL_PATH to the local GGUF model file."
         )
 
+    cpu_count = os.cpu_count() or 8
+    default_threads = max(1, cpu_count - 2)
     n_ctx = int(os.getenv("STRANDEX_LLAMA_CTX", "4096"))
-    n_threads = int(os.getenv("STRANDEX_LLAMA_THREADS", "8"))
+    n_threads = int(os.getenv("STRANDEX_LLAMA_THREADS", str(default_threads)))
     n_gpu_layers = int(os.getenv("STRANDEX_LLAMA_GPU_LAYERS", "0"))
     return Llama(
         model_path=model_path,
