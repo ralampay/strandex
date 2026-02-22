@@ -33,6 +33,10 @@ Reusable tools live in `strandex/tools` so new agents can share functionality:
 - `strandex/tools/pdf_reader.py`: PDF text extraction.
 - `strandex/tools/llama_runner.py`: Local GGUF loading and completion helpers.
 
+## Agent Docs
+
+See `docs/agents/README.md` for the agent documentation index.
+
 ## Run an Agent
 
 ```bash

@@ -1,4 +1,8 @@
 {
   "name": "research_summarizer",
-  "description": "Summarize PDF research documents with a local GGUF model via llama-cpp-python."
+  "description": "Summarize PDF research documents with a local GGUF model via llama-cpp-python.",
+  "prompts": {
+    "chunk_summary": "You are a research assistant. Summarize the following text for concise research notes. Focus on key claims, evidence, and conclusions.\\n\\nText:\\n{chunk}\\n\\nSummary:\\n",
+    "final_summary": "You are a research assistant. Combine the notes into a clear summary with 3-6 bullet points plus a short paragraph overview.\\n\\nNotes:\\n{notes}\\n\\nSummary:\\n"
+  }
 }
