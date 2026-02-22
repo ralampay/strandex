@@ -83,8 +83,7 @@ def main() -> int:
         with console.status(f"Loading agent '{args.agent_name}'...", spinner="dots"):
             agent = load_agent(args.agent_name)
         logger.info("Loaded agent '%s'.", args.agent_name)
-        with console.status(f"Running agent '{args.agent_name}'...", spinner="dots"):
-            result = agent.run(args.input)
+        result = agent.run(args.input)
         logger.info("Completed agent '%s'.", args.agent_name)
         print("\nResult:")
         render_markdown = os.getenv("STRANDEX_RENDER_MARKDOWN", "1").lower() in {
