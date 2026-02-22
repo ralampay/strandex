@@ -1,0 +1,4 @@
+{
+  "name": "research_summarizer",
+  "description": "Summarize PDF research documents with a local GGUF model via llama-cpp-python."
+}
